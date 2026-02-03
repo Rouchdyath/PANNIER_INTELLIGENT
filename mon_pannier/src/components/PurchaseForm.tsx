@@ -7,12 +7,24 @@ interface Product {
   category?: { name: string };
 }
 
+interface Category {
+  id: number;
+  name: string;
+}
+
 interface PurchaseFormProps {
   onSubmit: (purchase: { productId: number; price: number; purchaseDate: string; notes?: string }) => void;
 }
 
 export const PurchaseForm: React.FC<PurchaseFormProps> = ({ onSubmit }) => {
   const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [showAddProduct, setShowAddProduct] = useState(false);
+  const [newProduct, setNewProduct] = useState({
+    name: '',
+    brand: '',
+    categoryId: ''
+  });
   const [formData, setFormData] = useState({
     productId: '',
     price: '',
@@ -24,6 +36,7 @@ export const PurchaseForm: React.FC<PurchaseFormProps> = ({ onSubmit }) => {
 
   useEffect(() => {
     fetchProducts();
+    fetchCategories();
   }, []);
 
   const fetchProducts = async () => {
@@ -33,6 +46,50 @@ export const PurchaseForm: React.FC<PurchaseFormProps> = ({ onSubmit }) => {
       setProducts(data);
     } catch (error) {
       console.error('Erreur lors du chargement des produits:', error);
+    }
+  };
+
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/categories');
+      const data = await response.json();
+      setCategories(data);
+    } catch (error) {
+      console.error('Erreur lors du chargement des catégories:', error);
+    }
+  };
+
+  const handleAddProduct = async () => {
+    if (!newProduct.name.trim()) {
+      alert('Le nom du produit est obligatoire');
+      return;
+    }
+
+    try {
+      const productData = {
+        name: newProduct.name,
+        brand: newProduct.brand || undefined,
+        categoryId: newProduct.categoryId ? parseInt(newProduct.categoryId) : undefined
+      };
+
+      const response = await fetch('http://localhost:3000/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(productData)
+      });
+
+      if (response.ok) {
+        const createdProduct = await response.json();
+        await fetchProducts(); // Recharger la liste
+        setFormData(prev => ({ ...prev, productId: createdProduct.id.toString() }));
+        setNewProduct({ name: '', brand: '', categoryId: '' });
+        setShowAddProduct(false);
+      } else {
+        alert('Erreur lors de la création du produit');
+      }
+    } catch (error) {
+      console.error('Erreur:', error);
+      alert('Erreur lors de la création du produit');
     }
   };
 
@@ -98,28 +155,94 @@ export const PurchaseForm: React.FC<PurchaseFormProps> = ({ onSubmit }) => {
     }
   };
 
+  const handleNewProductChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setNewProduct(prev => ({ ...prev, [name]: value }));
+  };
+
   return (
     <div className="purchase-form">
       <h2>Ajouter un Achat</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="productId">Produit *</label>
-          <select
-            id="productId"
-            name="productId"
-            value={formData.productId}
-            onChange={handleChange}
-            className={errors.productId ? 'error' : ''}
-          >
-            <option value="">Sélectionner un produit</option>
-            {products.map(product => (
-              <option key={product.id} value={product.id}>
-                {product.name} {product.category && `(${product.category.name})`}
-              </option>
-            ))}
-          </select>
+          <div className="product-select-container">
+            <select
+              id="productId"
+              name="productId"
+              value={formData.productId}
+              onChange={handleChange}
+              className={errors.productId ? 'error' : ''}
+            >
+              <option value="">Sélectionner un produit</option>
+              {products.map(product => (
+                <option key={product.id} value={product.id}>
+                  {product.name} {product.category && `(${product.category.name})`}
+                </option>
+              ))}
+            </select>
+            <button
+              type="button"
+              className="add-product-btn"
+              onClick={() => setShowAddProduct(!showAddProduct)}
+            >
+              {showAddProduct ? '✕' : '+'}
+            </button>
+          </div>
           {errors.productId && <span className="error-message">{errors.productId}</span>}
         </div>
+
+        {showAddProduct && (
+          <div className="add-product-form">
+            <h3>Ajouter un nouveau produit</h3>
+            <div className="form-group">
+              <label htmlFor="newProductName">Nom du produit *</label>
+              <input
+                type="text"
+                id="newProductName"
+                name="name"
+                value={newProduct.name}
+                onChange={handleNewProductChange}
+                placeholder="Ex: Yaourt nature"
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="newProductBrand">Marque (optionnel)</label>
+              <input
+                type="text"
+                id="newProductBrand"
+                name="brand"
+                value={newProduct.brand}
+                onChange={handleNewProductChange}
+                placeholder="Ex: Danone"
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="newProductCategory">Catégorie (optionnel)</label>
+              <select
+                id="newProductCategory"
+                name="categoryId"
+                value={newProduct.categoryId}
+                onChange={handleNewProductChange}
+              >
+                <option value="">Aucune catégorie</option>
+                {categories.map(category => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="add-product-actions">
+              <button type="button" onClick={handleAddProduct} className="confirm-btn">
+                Ajouter le produit
+              </button>
+              <button type="button" onClick={() => setShowAddProduct(false)} className="cancel-btn">
+                Annuler
+              </button>
+            </div>
+          </div>
+        )}
 
         <div className="form-group">
           <label htmlFor="price">Prix (€) *</label>

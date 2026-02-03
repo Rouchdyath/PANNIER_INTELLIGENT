@@ -42,9 +42,10 @@ body {
   flex: 1;
   display: flex;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
   padding: 40px 20px;
   min-height: calc(100vh - 120px);
+  width: 100%;
 }
 
 .message {
@@ -91,11 +92,27 @@ body {
   
   .app-main {
     padding: 20px 15px;
+    align-items: flex-start;
+    padding-top: 40px;
   }
   
   .message {
     left: 15px;
     right: 15px;
     transform: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-header {
+    padding: 20px 15px;
+  }
+  
+  .app-header h1 {
+    font-size: 1.8rem;
+  }
+  
+  .app-main {
+    padding: 20px 10px;
   }
 }
