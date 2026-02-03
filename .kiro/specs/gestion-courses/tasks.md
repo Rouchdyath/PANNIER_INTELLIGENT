@@ -96,7 +96,7 @@ Implémentation progressive du système de gestion des courses en commençant pa
     - Gestion de l'état vide
     - _Exigences: 2.1, 2.2, 2.3_
   
-  - [ ] 6.3 Créer les composants d'analyse
+  - [x] 6.3 Créer les composants d'analyse
     - TopProductAnalysis pour afficher le produit le plus acheté
     - FinancialSummary pour afficher le bilan financier
     - Gestion des cas d'état vide

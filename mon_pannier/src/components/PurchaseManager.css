@@ -101,12 +101,16 @@
 
 @media (max-width: 480px) {
   .tabs {
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
   }
   
   .tab-button {
     border-bottom: 1px solid #dee2e6;
     border-radius: 0;
+    padding: 10px 8px;
+    font-size: 0.8rem;
   }
   
   .tab-button.active {
