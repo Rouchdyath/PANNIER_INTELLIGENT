@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Query, BadRequestException } from '@nestjs/common';
 import { ProductsService } from '../services/products.service';
 import { CreateProductDto } from '../dto/create-product.dto';
 
@@ -12,9 +12,13 @@ export class ProductsController {
   }
 
   @Get()
-  findAll(@Query('categoryId', ParseIntPipe) categoryId?: number) {
+  findAll(@Query('categoryId') categoryId?: string) {
     if (categoryId) {
-      return this.productsService.findByCategory(categoryId);
+      const categoryIdNum = parseInt(categoryId);
+      if (isNaN(categoryIdNum)) {
+        throw new BadRequestException('categoryId must be a valid number');
+      }
+      return this.productsService.findByCategory(categoryIdNum);
     }
     return this.productsService.findAll();
   }

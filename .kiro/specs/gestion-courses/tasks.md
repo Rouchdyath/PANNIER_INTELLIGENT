@@ -90,7 +90,7 @@ Implémentation progressive du système de gestion des courses en commençant pa
     - Soumission et réinitialisation du formulaire
     - _Exigences: 1.1, 1.2, 1.3, 1.4, 6.3_
   
-  - [ ] 6.2 Créer le composant PurchaseHistory
+  - [x] 6.2 Créer le composant PurchaseHistory
     - Affichage de la liste des achats triée par date
     - Formatage des données (prix, date)
     - Gestion de l'état vide

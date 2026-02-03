@@ -102,7 +102,7 @@ export class PurchasesService {
 
     return {
       totalAmount: parseFloat(result.totalAmount) || 0,
-      currency: 'EUR',
+      currency: 'XOF', // Franc CFA
       purchaseCount: parseInt(result.purchaseCount) || 0,
     };
   }

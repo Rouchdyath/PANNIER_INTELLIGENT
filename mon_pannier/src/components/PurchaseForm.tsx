@@ -245,7 +245,7 @@ export const PurchaseForm: React.FC<PurchaseFormProps> = ({ onSubmit }) => {
         )}
 
         <div className="form-group">
-          <label htmlFor="price">Prix (€) *</label>
+          <label htmlFor="price">Prix (FCFA) *</label>
           <input
             type="number"
             id="price"
