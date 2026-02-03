@@ -3,11 +3,12 @@ import { PurchaseForm } from './PurchaseForm';
 import { PurchaseHistory } from './PurchaseHistory';
 import { Dashboard } from './Dashboard';
 import { Analytics } from './Analytics';
+import { FinancialSummary } from './FinancialSummary';
 import { apiService, type CreatePurchaseDto } from '../services/api';
 import './PurchaseManager.css';
 
 export const PurchaseManager: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'form' | 'history' | 'analytics'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'form' | 'history' | 'analytics' | 'financial'>('dashboard');
   const [message, setMessage] = useState<string>('');
   const [messageType, setMessageType] = useState<'success' | 'error'>('success');
   const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -69,6 +70,12 @@ export const PurchaseManager: React.FC = () => {
         >
           📈 Analyses
         </button>
+        <button
+          className={`tab-button ${activeTab === 'financial' ? 'active' : ''}`}
+          onClick={() => setActiveTab('financial')}
+        >
+          💰 Bilan
+        </button>
       </div>
 
       <div className="tab-content">
@@ -83,6 +90,9 @@ export const PurchaseManager: React.FC = () => {
         )}
         {activeTab === 'analytics' && (
           <Analytics />
+        )}
+        {activeTab === 'financial' && (
+          <FinancialSummary />
         )}
       </div>
     </div>
