@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { apiService, type FinancialSummary as FinancialSummaryType, type Purchase } from '../services/api';
+import { apiService, type Purchase } from '../services/api';
 import './FinancialSummary.css';
 
 export const FinancialSummary: React.FC = () => {
-  const [financialSummary, setFinancialSummary] = useState<FinancialSummaryType | null>(null);
   const [purchases, setPurchases] = useState<Purchase[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>('');
@@ -18,15 +17,11 @@ export const FinancialSummary: React.FC = () => {
       setLoading(true);
       setError('');
       
-      const [financialData, purchasesData] = await Promise.all([
-        apiService.getFinancialSummary().catch(() => ({ totalAmount: 0, currency: 'XOF', purchaseCount: 0 })),
-        apiService.getPurchases().catch(() => [])
-      ]);
+      const purchasesData = await apiService.getPurchases().catch(() => []);
 
       // Filtrer les achats selon la période sélectionnée
       const filteredPurchases = filterPurchasesByPeriod(purchasesData, selectedPeriod);
       
-      setFinancialSummary(financialData);
       setPurchases(filteredPurchases);
     } catch (error) {
       console.error('Erreur lors du chargement du bilan financier:', error);
@@ -230,7 +225,7 @@ export const FinancialSummary: React.FC = () => {
           <div className="financial-section">
             <h3>📂 Dépenses par Catégorie</h3>
             <div className="category-expenses">
-              {categoryExpenses.map((item, index) => (
+              {categoryExpenses.map((item) => (
                 <div key={item.category} className="category-expense-item">
                   <div className="category-info">
                     <span className="category-name">{item.category}</span>

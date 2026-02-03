@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import { PurchaseForm } from './PurchaseForm';
 import { PurchaseHistory } from './PurchaseHistory';
-import { Dashboard } from './Dashboard';
 import { Analytics } from './Analytics';
 import { FinancialSummary } from './FinancialSummary';
 import { apiService, type CreatePurchaseDto } from '../services/api';
 import './PurchaseManager.css';
 
 export const PurchaseManager: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'form' | 'history' | 'analytics' | 'financial'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'form' | 'history' | 'analytics' | 'financial'>('form');
   const [message, setMessage] = useState<string>('');
   const [messageType, setMessageType] = useState<'success' | 'error'>('success');
   const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -47,12 +46,6 @@ export const PurchaseManager: React.FC = () => {
 
       <div className="tabs">
         <button
-          className={`tab-button ${activeTab === 'dashboard' ? 'active' : ''}`}
-          onClick={() => setActiveTab('dashboard')}
-        >
-          📊 Dashboard
-        </button>
-        <button
           className={`tab-button ${activeTab === 'form' ? 'active' : ''}`}
           onClick={() => setActiveTab('form')}
         >
@@ -79,9 +72,6 @@ export const PurchaseManager: React.FC = () => {
       </div>
 
       <div className="tab-content">
-        {activeTab === 'dashboard' && (
-          <Dashboard />
-        )}
         {activeTab === 'form' && (
           <PurchaseForm onSubmit={handlePurchaseSubmit} />
         )}

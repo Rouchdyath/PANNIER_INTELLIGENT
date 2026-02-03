@@ -13,15 +13,29 @@ async function bootstrap() {
   }));
 
   // Configuration CORS pour le frontend React
+  const allowedOrigins: (string | RegExp)[] = [
+    'http://localhost:5173',
+    'http://localhost:5174',
+    'http://localhost:3000'
+  ];
+
+  // Ajouter l'URL du frontend en production si définie
+  if (process.env.FRONTEND_URL) {
+    allowedOrigins.push(process.env.FRONTEND_URL);
+  }
+
+  // En production, accepter les domaines Vercel
+  if (process.env.NODE_ENV === 'production') {
+    allowedOrigins.push(/\.vercel\.app$/);
+  }
+
   app.enableCors({
-    origin: [
-      'http://localhost:5173',
-      'http://localhost:5174',
-      'http://localhost:3000'
-    ],
+    origin: allowedOrigins,
     credentials: true,
   });
 
-  await app.listen(process.env.PORT || 3000);
+  const port = process.env.PORT || 3000;
+  await app.listen(port);
+  console.log(`🚀 Application démarrée sur le port ${port}`);
 }
 bootstrap();

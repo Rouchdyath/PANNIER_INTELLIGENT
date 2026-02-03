@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { apiService, type TopProductAnalysis, type FinancialSummary, type Purchase } from '../services/api';
+import { apiService, type Purchase } from '../services/api';
 import './Analytics.css';
 
 export const Analytics: React.FC = () => {
-  const [topProduct, setTopProduct] = useState<TopProductAnalysis | null>(null);
-  const [financialSummary, setFinancialSummary] = useState<FinancialSummary | null>(null);
   const [purchases, setPurchases] = useState<Purchase[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>('');
@@ -19,17 +17,11 @@ export const Analytics: React.FC = () => {
       setLoading(true);
       setError('');
       
-      const [topProductData, financialData, purchasesData] = await Promise.all([
-        apiService.getTopProduct().catch(() => null),
-        apiService.getFinancialSummary().catch(() => ({ totalAmount: 0, currency: 'XOF', purchaseCount: 0 })),
-        apiService.getPurchases().catch(() => [])
-      ]);
+      const purchasesData = await apiService.getPurchases().catch(() => []);
 
       // Filtrer les achats selon la période sélectionnée
       const filteredPurchases = filterPurchasesByPeriod(purchasesData, selectedPeriod);
       
-      setTopProduct(topProductData);
-      setFinancialSummary(financialData);
       setPurchases(filteredPurchases);
     } catch (error) {
       console.error('Erreur lors du chargement des analyses:', error);
@@ -221,7 +213,7 @@ export const Analytics: React.FC = () => {
             <h3>📂 Analyse par Catégories</h3>
             <p className="section-subtitle">Répartition des achats par catégorie</p>
             <div className="category-stats">
-              {categoryStats.map((category, index) => (
+              {categoryStats.map((category) => (
                 <div key={category.name} className="category-item">
                   <div className="category-header">
                     <span className="category-name">{category.name}</span>
